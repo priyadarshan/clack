@@ -21,12 +21,14 @@
 (defun run (app server &rest args
                 &key (address nil address-specified-p) use-thread
                      (swank-interface "127.0.0.1") swank-port debug
+                     silent
                 &allow-other-keys)
   (let ((handler-package (find-handler server))
         (bt2:*default-special-bindings* `((*standard-output* . ,*standard-output*)
                                           (*error-output* . ,*error-output*)
                                           ,@bt2:*default-special-bindings*)))
-    (when debug
+    (when (and debug
+               (not silent))
       (format t "NOTICE: Running in debug mode. Debugger will be invoked on errors.
   Specify ':debug nil' to turn it off on remote environments."))
     (flet ((run-server ()

@@ -104,7 +104,7 @@
                    :port port
                    :debug debug
                    :use-thread use-thread
-                   (delete-from-plist args :server :port :debug :silent :use-thread))
+                   (delete-from-plist args :server :port :debug :use-thread))
           (when (and use-thread
                      (not silent))
             (format t "~&~:(~A~) server is started.~%Listening on ~A:~A.~%" server address port)))))))
