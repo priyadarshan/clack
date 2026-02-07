@@ -22,6 +22,7 @@
                 &key (address nil address-specified-p) use-thread
                      (swank-interface "127.0.0.1") swank-port debug
                 &allow-other-keys)
+  (declare (ignorable swank-interface))
   (let ((handler-package (find-handler server))
         (bt2:*default-special-bindings* `((*standard-output* . ,*standard-output*)
                                           (*error-output* . ,*error-output*)
@@ -31,7 +32,10 @@
   Specify ':debug nil' to turn it off on remote environments."))
     (flet ((run-server ()
              (when swank-port
-               (swank:create-server :interface swank-interface :port swank-port :dont-close t))
+               #+swank
+               (swank:create-server :interface swank-interface :port swank-port :dont-close t)
+               #-swank
+               (error "Swank is required to use :swank-port but is not loaded. Load SLIME or Swank first."))
              (apply (intern #.(string '#:run) handler-package)
                     app
                     :allow-other-keys t
@@ -63,5 +67,6 @@
         (let ((package (find-handler (handler-server handler))))
           (funcall (intern #.(string '#:stop) package) acceptor)))
     (when swank-port
+      #+swank
       (swank:stop-server swank-port))
     t))
