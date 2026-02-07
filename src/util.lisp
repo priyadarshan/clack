@@ -7,10 +7,12 @@
 (in-package :clack.util)
 
 (defun find-handler (server)
-  (flet ((find-with-prefix (prefix)
-           (find-package-or-load (concatenate 'string
-                                              prefix
-                                              (symbol-name server)))))
-    (or (find-with-prefix #.(string '#:clack.handler.))
-        (error "~S is unknown handler."
-               server))))
+  (let ((name (symbol-name server)))
+    (or (find-package-or-load (concatenate 'string
+                                           #.(string '#:clack/handler/)
+                                           name))
+        (find-package-or-load (concatenate 'string
+                                           #.(string '#:clack.handler.)
+                                           name)
+                              t)
+        (error "~S is unknown handler." server))))
