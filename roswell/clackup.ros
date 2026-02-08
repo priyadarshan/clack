@@ -156,6 +156,11 @@ Options:
     ;; Load files
     (mapc #'load (getf opt-args :load))
 
+    ;; Load Swank if --swank-port is specified and not already loaded
+    (when (getf key-args :swank-port)
+      (unless (find-package :swank)
+        (ql:quickload :swank :silent t)))
+
     ;; Add :port and :fd from Server::Starter's environment var.
     (multiple-value-bind (port fd)
         (parse-server-starter-port)
